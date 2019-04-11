@@ -5,6 +5,8 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QCheckBox>
+#include <QTimer>
+#include <QPushButton>
 #include <Windows.h>
 #include <psapi.h>
 #include <tlhelp32.h>
@@ -15,12 +17,15 @@ class DDCbuff : public QMainWindow
 
 public:
 	DDCbuff(QWidget *parent = Q_NULLPTR);
+	QTimer *delayBombTimer;
 	
 	
 private:
 	QCheckBox *inverseBox;
 
+
 	bool isRunning();
+
 
 
 public slots:
@@ -35,4 +40,7 @@ public slots:
 
 	void playerStand();
 	void playerStanda();
+
+	void delayBomb();
+	void delayBomba();
 };

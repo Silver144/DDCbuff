@@ -4,13 +4,18 @@ HANDLE hSnapshot;
 
 PROCESSENTRY32 pe;
 
-int cntHook1 = 1, cntHook2 = 1;
-HHOOK KeyHook1, KeyHook2;
+int cntHook1 = 1, cntHook2 = 1, cntHook3;
+
+int bombCounter, bombFlag;
+
+HHOOK KeyHook1, KeyHook2, KeyHook3;
+
+DDCbuff *hzc;
 
 DDCbuff::DDCbuff(QWidget *parent)
 	: QMainWindow(parent)
 {
-	
+	hzc = this;
 }
 
 LRESULT CALLBACK KeyProc1(int nCode, WPARAM wParam, LPARAM lParam)
@@ -39,6 +44,30 @@ LRESULT CALLBACK KeyProc2(int nCode, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(KeyHook2, nCode, wParam, lParam);
 }
 
+LRESULT CALLBACK KeyProc3(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode != HC_ACTION)
+		return CallNextHookEx(KeyHook3, nCode, wParam, lParam);
+	PKBDLLHOOKSTRUCT LowKey = NULL;
+	LowKey = (PKBDLLHOOKSTRUCT)lParam;
+	if (LowKey->vkCode == 'X')
+	{
+		if (bombFlag)
+			return 1;
+		else
+		{
+			if (bombCounter == 3)
+				return CallNextHookEx(KeyHook3, nCode, wParam, lParam);
+			else
+			{
+				bombFlag = 1;
+				hzc->delayBombTimer->start(1000);	
+			}
+		}
+	}
+	return CallNextHookEx(KeyHook3, nCode, wParam, lParam);
+}
+
 void DDCbuff::setHook1()
 {
 	if (!cntHook1)
@@ -53,6 +82,14 @@ void DDCbuff::setHook2()
 		return;
 	cntHook2 = 0;
 	KeyHook2 = SetWindowsHookEx(WH_KEYBOARD_LL, KeyProc2, GetModuleHandle(NULL), 0);
+}
+
+void setHook3()
+{
+	if (!cntHook3)
+		return;
+	cntHook3 = 0;
+	KeyHook3 = SetWindowsHookEx(WH_KEYBOARD_LL, KeyProc3, GetModuleHandle(NULL), 0);
 }
 
 void unHook1()
@@ -71,6 +108,13 @@ void unHook2()
 	UnhookWindowsHookEx(KeyHook2);
 }
 
+void unHook3()
+{
+	if (cntHook3)
+		return;
+	cntHook3 = 1;
+	UnhookWindowsHookEx(KeyHook3);
+}
 
 bool DDCbuff::isRunning()
 {
@@ -93,6 +137,43 @@ bool DDCbuff::isRunning()
 			return true;
 		}
 	} while (1);
+}
+
+void DDCbuff::bombCount()
+{
+	if (bombCounter == 3)
+	{
+		bombFlag = 0;
+		INPUT input[2];
+		ZeroMemory(&input, sizeof(input));
+		input[0].type = INPUT_KEYBOARD;
+		input[0].ki.wVk = 'X';
+		input[0].ki.wScan = MapVirtualKey(input[0].ki.wVk, MAPVK_VK_TO_VSC);
+		input[1].type = INPUT_KEYBOARD;
+		input[1].ki.wVk = input[0].ki.wVk;
+		input[1].ki.wScan = input[0].ki.wScan;
+		input[1].ki.dwFlags = KEYEVENTF_KEYUP;
+
+		SendInput(_countof(input), input, sizeof(INPUT));
+		delayBombTimer->stop();
+		bombCounter = 0;
+	}
+	else
+		bombCounter++;
+}
+
+void DDCbuff::delayBomb()
+{
+	delayBombTimer = new QTimer(hzc);
+	connect(delayBombTimer, SIGNAL(timeout()), this, SLOT(hzc->bombCount()));
+	setHook3();
+	bombFlag = 0;
+}
+
+void DDCbuff::delayBomba()
+{
+	delete delayBombTimer;
+	unHook3();
 }
 
 void DDCbuff::playerStand()
