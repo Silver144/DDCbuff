@@ -16,14 +16,23 @@ class DDCbuff : public QMainWindow
 public:
 	DDCbuff(QWidget *parent = Q_NULLPTR);
 	
+	
+private:
 	QCheckBox *inverseBox;
 
 	bool isRunning();
 
+
 public slots:
 	void inverseBonus();
 	void inverseBonusa();
+	
 	void setHook1();
 	void setHook2();
 
+	void punishBonus();
+	void punishBonusa();
+
+	void playerStand();
+	void playerStanda();
 };
