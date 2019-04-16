@@ -16,6 +16,67 @@ DDCbuff::DDCbuff(QWidget *parent)
 	: QMainWindow(parent)
 {
 	hzc = this;
+
+	inverseBox = new QCheckBox("½±Àø»¥»»", this);
+	lrBox = new QCheckBox("ÉÏÏÂ·âÓ¡", this);
+	udBox = new QCheckBox("×óÓÒ·âÓ¡", this);
+	delayBox = new QCheckBox("ËÄ³ßÕ¨µ¯", this);
+	standBox = new QCheckBox("ÌæÉíµØ²Ø", this);
+	punishBox = new QCheckBox("Ãâ·ÑÎç²Í", this);
+
+	timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()), this, SLOT(checkProg()));
+
+	UIsetup();
+}
+
+void DDCbuff::checkProg()
+{
+	if (isRunning())
+	{
+		this->setWindowTitle("Running");
+		if (inverseBox->isChecked())
+			inverseBonus();
+		else
+			inverseBonusA();
+		if (lrBox->isChecked())
+			setHook2();
+		else
+			unHook2();
+		if (udBox->isChecked())
+			setHook1();
+		else
+			unHook1();
+		if (delayBox->isChecked())
+			delayBomb();
+		else
+			delayBombA();
+		if (punishBox->isChecked())
+			punishBonus();
+		else
+			punishBonusA();
+	}
+	else
+		this->setWindowTitle("No Game");
+}
+
+void DDCbuff::UIsetup()
+{
+	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
+	int width = GetSystemMetrics(SM_CXFULLSCREEN);
+	int height = GetSystemMetrics(SM_CYFULLSCREEN);
+	this->setWindowTitle("No Game");
+	this->setWindowFlags(Qt::WindowCloseButtonHint);
+	this->setFixedSize(286, 367);
+	this->move((width - 286) / 2, (height - 367) / 2);
+
+	inverseBox->setGeometry(20, 20, 111, 31);
+	lrBox->setGeometry(150, 20, 111, 31);
+	udBox->setGeometry(20, 70, 111, 31);
+	delayBox->setGeometry(150, 70, 111, 31);
+	standBox->setGeometry(20, 120, 111, 31);
+	punishBox->setGeometry(150, 120, 111, 31);
+
 }
 
 LRESULT CALLBACK KeyProc1(int nCode, WPARAM wParam, LPARAM lParam)
@@ -92,7 +153,7 @@ void setHook3()
 	KeyHook3 = SetWindowsHookEx(WH_KEYBOARD_LL, KeyProc3, GetModuleHandle(NULL), 0);
 }
 
-void unHook1()
+void DDCbuff::unHook1()
 {
 	if (cntHook1)
 		return;
@@ -100,7 +161,7 @@ void unHook1()
 	UnhookWindowsHookEx(KeyHook1);
 }
 
-void unHook2()
+void DDCbuff::unHook2()
 {
 	if (cntHook2)
 		return;
@@ -170,7 +231,7 @@ void DDCbuff::delayBomb()
 	bombFlag = 0;
 }
 
-void DDCbuff::delayBomba()
+void DDCbuff::delayBombA()
 {
 	delete delayBombTimer;
 	unHook3();
@@ -191,7 +252,7 @@ void DDCbuff::playerStand()
 	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
 }
 
-void DDCbuff::playerStanda()
+void DDCbuff::playerStandA()
 {
 	unsigned char code[] = { 0xC7, 0x87, 0x84, 0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
 	unsigned char code2[] = {
@@ -222,7 +283,7 @@ void DDCbuff::punishBonus()
 	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
 }
 
-void DDCbuff::punishBonusa()
+void DDCbuff::punishBonusA()
 {
 	unsigned char code[] = { 0x68, 0xA0, 0xA0, 0xA0, 0x80 };
 	unsigned char code2[] = {
@@ -249,7 +310,7 @@ void DDCbuff::inverseBonus()
 
 }
 
-void DDCbuff::inverseBonusa()
+void DDCbuff::inverseBonusA()
 {
 	unsigned char code[] = { 0x2C };
 	unsigned char code2[] = { 0x32, 0x7C, 0x50 };

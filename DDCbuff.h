@@ -18,29 +18,41 @@ class DDCbuff : public QMainWindow
 public:
 	DDCbuff(QWidget *parent = Q_NULLPTR);
 	QTimer *delayBombTimer;
-	
+	QTimer *timer;
 	
 private:
 	QCheckBox *inverseBox;
+	QCheckBox *lrBox;
+	QCheckBox *udBox;
+	QCheckBox *delayBox;
+	QCheckBox *standBox;
+	QCheckBox *punishBox;
 
 
 	bool isRunning();
+	void UIsetup();
 
 
 
 public slots:
+	void checkProg();
+
 	void inverseBonus();
-	void inverseBonusa();
+	void inverseBonusA();
 	
 	void setHook1();
 	void setHook2();
 
+	void unHook1();
+	void unHook2();
+
 	void punishBonus();
-	void punishBonusa();
+	void punishBonusA();
 
 	void playerStand();
-	void playerStanda();
+	void playerStandA();
 
 	void delayBomb();
-	void delayBomba();
+	void delayBombA();
+	void bombCount();
 };
