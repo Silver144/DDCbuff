@@ -6,6 +6,8 @@ PROCESSENTRY32 pe;
 
 int cntHook1 = 1, cntHook2 = 1, cntHook3;
 
+int procStand, procBonus;
+
 int bombCounter, bombFlag;
 
 HHOOK KeyHook1, KeyHook2, KeyHook3;
@@ -17,15 +19,22 @@ DDCbuff::DDCbuff(QWidget *parent)
 {
 	hzc = this;
 
+	procStand = 0;
+	procBonus = 0;
+
 	inverseBox = new QCheckBox("½±Àø»¥»»", this);
-	lrBox = new QCheckBox("ÉÏÏÂ·âÓ¡", this);
-	udBox = new QCheckBox("×óÓÒ·âÓ¡", this);
+	lrBox = new QCheckBox("×óÓÒ·âÓ¡", this);
+	udBox = new QCheckBox("ÉÏÏÂ·âÓ¡", this);
 	delayBox = new QCheckBox("ËÄ³ßÕ¨µ¯", this);
 	standBox = new QCheckBox("ÌæÉíµØ²Ø", this);
 	punishBox = new QCheckBox("Ãâ·ÑÎç²Í", this);
 
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(checkProg()));
+	timer->start(100);
+
+	delayBombTimer = new QTimer(this);
+	connect(delayBombTimer, SIGNAL(timeout()), this, SLOT(bombCount()));
 
 	UIsetup();
 }
@@ -55,6 +64,10 @@ void DDCbuff::checkProg()
 			punishBonus();
 		else
 			punishBonusA();
+		if (standBox->isChecked())
+			playerStand();
+		else
+			playerStandA();
 	}
 	else
 		this->setWindowTitle("No Game");
@@ -117,12 +130,13 @@ LRESULT CALLBACK KeyProc3(int nCode, WPARAM wParam, LPARAM lParam)
 			return 1;
 		else
 		{
-			if (bombCounter == 3)
+			if (bombCounter == 1)
 				return CallNextHookEx(KeyHook3, nCode, wParam, lParam);
 			else
 			{
 				bombFlag = 1;
-				hzc->delayBombTimer->start(1000);	
+				hzc->delayBombTimer->start(1500);
+				return 1;
 			}
 		}
 	}
@@ -145,7 +159,7 @@ void DDCbuff::setHook2()
 	KeyHook2 = SetWindowsHookEx(WH_KEYBOARD_LL, KeyProc2, GetModuleHandle(NULL), 0);
 }
 
-void setHook3()
+void DDCbuff::setHook3()
 {
 	if (!cntHook3)
 		return;
@@ -169,7 +183,7 @@ void DDCbuff::unHook2()
 	UnhookWindowsHookEx(KeyHook2);
 }
 
-void unHook3()
+void DDCbuff::unHook3()
 {
 	if (cntHook3)
 		return;
@@ -202,20 +216,19 @@ bool DDCbuff::isRunning()
 
 void DDCbuff::bombCount()
 {
-	if (bombCounter == 3)
+	if (bombCounter == 1)
 	{
 		bombFlag = 0;
-		INPUT input[2];
+		INPUT input;
 		ZeroMemory(&input, sizeof(input));
-		input[0].type = INPUT_KEYBOARD;
-		input[0].ki.wVk = 'X';
-		input[0].ki.wScan = MapVirtualKey(input[0].ki.wVk, MAPVK_VK_TO_VSC);
-		input[1].type = INPUT_KEYBOARD;
-		input[1].ki.wVk = input[0].ki.wVk;
-		input[1].ki.wScan = input[0].ki.wScan;
-		input[1].ki.dwFlags = KEYEVENTF_KEYUP;
-
-		SendInput(_countof(input), input, sizeof(INPUT));
+		input.type = INPUT_KEYBOARD;
+		input.ki.wVk = 'X';
+		input.ki.wScan = MapVirtualKey(input.ki.wVk, MAPVK_VK_TO_VSC);
+		SendInput(1, &input, sizeof(INPUT));
+		Sleep(100);
+		input.ki.dwFlags = KEYEVENTF_KEYUP;
+		SendInput(1, &input, sizeof(INPUT)); 
+		
 		delayBombTimer->stop();
 		bombCounter = 0;
 	}
@@ -225,15 +238,13 @@ void DDCbuff::bombCount()
 
 void DDCbuff::delayBomb()
 {
-	delayBombTimer = new QTimer(hzc);
-	connect(delayBombTimer, SIGNAL(timeout()), this, SLOT(hzc->bombCount()));
-	setHook3();
 	bombFlag = 0;
+	setHook3();
 }
 
 void DDCbuff::delayBombA()
 {
-	delete delayBombTimer;
+	delayBombTimer->stop();
 	unHook3();
 }
 
@@ -241,37 +252,45 @@ void DDCbuff::playerStand()
 {
 	unsigned char code[] = { 0xE9, 0xC6, 0x16, 0x06, 0x00, 0x90, 0x90, 0x90, 0x90, 0x90 };
 	unsigned char code2[] = {	
-								0x7F, 0x0F, 0xC7, 0x87, 0x84, 0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
-								0xE9, 0x27, 0xE9, 0xE9, 0xFF, 0xFF, 0x0D, 0x70, 0x58, 0x4F, 0x00, 0xC7,
-								0x87, 0x84, 0x06, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0xE9, 0x12, 0xE9,
+								0x83, 0x3D, 0x70, 0x58, 0x4F, 0x00, 0x00, 0x7F, 0x19, 0xC7, 0x87, 0x84,
+								0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0xC7, 0x05, 0x70, 0x58, 0x4F,
+								0x00, 0x03, 0x00, 0x00, 0x00, 0xE9, 0x1D, 0xE9, 0xF9, 0xFF, 0xFF, 0x0D,
+								0x70, 0x58, 0x4F, 0x00, 0xC7, 0x87, 0x84, 0x06, 0x00, 0x00, 0x02, 0x00,
+								0x00, 0x00, 0x83, 0x05, 0x58, 0x58, 0x4F, 0x00, 0x32, 0xE9, 0x01, 0xE9,
 								0xF9, 0xFF
 							};
-
+	unsigned char code3[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
 	hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
 	WriteProcessMemory(hSnapshot, LPVOID(0x0044F871), code, sizeof(code), NULL);
 	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
+	WriteProcessMemory(hSnapshot, LPVOID(0x0044DF45), code3, sizeof(code3), NULL);
+	procStand = 1;
 }
 
 void DDCbuff::playerStandA()
 {
-	unsigned char code[] = { 0xC7, 0x87, 0x84, 0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
-	unsigned char code2[] = {
-								0x7F, 0x0F, 0xC7, 0x87, 0x84, 0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
-								0xE9, 0x27, 0xE9, 0xE9, 0xFF, 0xFF, 0x0D, 0x70, 0x58, 0x4F, 0x00, 0xC7,
-								0x87, 0x84, 0x06, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0xE9, 0x12, 0xE9,
-								0xF9, 0xFF
-							};
+	if (procStand)
+	{
+		unsigned char code[] = { 0xC7, 0x87, 0x84, 0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
+		unsigned char code2[62];
+		unsigned char code3[] = { 0xC7, 0x05, 0x70, 0x58, 0x4F, 0x00, 0x03, 0x00, 0x00, 0x00 };
 
-	hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
-	WriteProcessMemory(hSnapshot, LPVOID(0x0044F871), code, sizeof(code), NULL);
-	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
+		memset(code2, 0, sizeof(code2));
+
+		hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
+		WriteProcessMemory(hSnapshot, LPVOID(0x0044F871), code, sizeof(code), NULL);
+		WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
+		WriteProcessMemory(hSnapshot, LPVOID(0x0044DF45), code3, sizeof(code3), NULL);
+
+		procStand = 0;
+	}
 }
 
 void DDCbuff::punishBonus()
 {
 	unsigned char code[] = { 0xE9, 0xE4, 0x7E, 0x07, 0x00 };
 	unsigned char code2[] = { 
-								0x68, 0xA0, 0xA0, 0xA0, 0x80, 0x6A, 0xff, 0X8d, 0X44, 0X24, 0X30, 0X50,
+								0x68, 0xA0, 0xA0, 0xA0, 0x80, 0x6A, 0xFF, 0X8D, 0X44, 0X24, 0X30, 0X50,
 								0x0F, 0x28, 0xDC, 0xE8, 0xB0, 0x70, 0xFA, 0xFF, 0x81, 0x3D, 0x58, 0x58,
 								0x4F, 0x00, 0xC8, 0x00, 0x00, 0x00, 0x7C, 0x0C, 0x83, 0x2D, 0x58, 0x58,
 								0x4F, 0x00, 0x64, 0xE9, 0xFF, 0x80, 0xF8, 0xFF, 0xC7, 0x05, 0x58, 0x58,
@@ -281,22 +300,30 @@ void DDCbuff::punishBonus()
 	hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
 	WriteProcessMemory(hSnapshot, LPVOID(0x00439053), code, sizeof(code), NULL);
 	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
+
+	procBonus = 1;
 }
 
 void DDCbuff::punishBonusA()
 {
-	unsigned char code[] = { 0x68, 0xA0, 0xA0, 0xA0, 0x80 };
-	unsigned char code2[] = {
-								0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0X00, 0X00, 0X00, 0X00, 0X00,
-								0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-								0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-								0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-								0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-							};
+	if (procBonus)
+	{
+		unsigned char code[] = { 0x68, 0xA0, 0xA0, 0xA0, 0x80 };
+		unsigned char code2[] = {
+									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0X00, 0X00, 0X00, 0X00, 0X00,
+									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+		};
 
-	hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
-	WriteProcessMemory(hSnapshot, LPVOID(0x00439053), code, sizeof(code), NULL);
-	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
+		hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
+		WriteProcessMemory(hSnapshot, LPVOID(0x00439053), code, sizeof(code), NULL);
+		WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
+
+		procBonus = 0;
+	}
+	
 }
 
 void DDCbuff::inverseBonus()
@@ -312,7 +339,7 @@ void DDCbuff::inverseBonus()
 
 void DDCbuff::inverseBonusA()
 {
-	unsigned char code[] = { 0x2C };
+	unsigned char code[] = { 0x7C };
 	unsigned char code2[] = { 0x32, 0x7C, 0x50 };
 
 	hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);

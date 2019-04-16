@@ -32,6 +32,9 @@ private:
 	bool isRunning();
 	void UIsetup();
 
+	void setHook3();
+	void unHook3();
+
 
 
 public slots:
