@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_DDCbuff_t {
-    QByteArrayData data[16];
-    char stringdata0[161];
+    QByteArrayData data[26];
+    char stringdata0[210];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -46,14 +46,25 @@ QT_MOC_LITERAL(11, 105, 11), // "playerStand"
 QT_MOC_LITERAL(12, 117, 12), // "playerStandA"
 QT_MOC_LITERAL(13, 130, 9), // "delayBomb"
 QT_MOC_LITERAL(14, 140, 10), // "delayBombA"
-QT_MOC_LITERAL(15, 151, 9) // "bombCount"
+QT_MOC_LITERAL(15, 151, 9), // "bombCount"
+QT_MOC_LITERAL(16, 161, 7), // "curtain"
+QT_MOC_LITERAL(17, 169, 8), // "curtainA"
+QT_MOC_LITERAL(18, 178, 2), // "ud"
+QT_MOC_LITERAL(19, 181, 3), // "udA"
+QT_MOC_LITERAL(20, 185, 2), // "lr"
+QT_MOC_LITERAL(21, 188, 3), // "lrA"
+QT_MOC_LITERAL(22, 192, 4), // "half"
+QT_MOC_LITERAL(23, 197, 5), // "halfA"
+QT_MOC_LITERAL(24, 203, 2), // "br"
+QT_MOC_LITERAL(25, 206, 3) // "brA"
 
     },
     "DDCbuff\0checkProg\0\0inverseBonus\0"
     "inverseBonusA\0setHook1\0setHook2\0unHook1\0"
     "unHook2\0punishBonus\0punishBonusA\0"
     "playerStand\0playerStandA\0delayBomb\0"
-    "delayBombA\0bombCount"
+    "delayBombA\0bombCount\0curtain\0curtainA\0"
+    "ud\0udA\0lr\0lrA\0half\0halfA\0br\0brA"
 };
 #undef QT_MOC_LITERAL
 
@@ -63,7 +74,7 @@ static const uint qt_meta_data_DDCbuff[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      14,   14, // methods
+      24,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -71,22 +82,42 @@ static const uint qt_meta_data_DDCbuff[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   84,    2, 0x0a /* Public */,
-       3,    0,   85,    2, 0x0a /* Public */,
-       4,    0,   86,    2, 0x0a /* Public */,
-       5,    0,   87,    2, 0x0a /* Public */,
-       6,    0,   88,    2, 0x0a /* Public */,
-       7,    0,   89,    2, 0x0a /* Public */,
-       8,    0,   90,    2, 0x0a /* Public */,
-       9,    0,   91,    2, 0x0a /* Public */,
-      10,    0,   92,    2, 0x0a /* Public */,
-      11,    0,   93,    2, 0x0a /* Public */,
-      12,    0,   94,    2, 0x0a /* Public */,
-      13,    0,   95,    2, 0x0a /* Public */,
-      14,    0,   96,    2, 0x0a /* Public */,
-      15,    0,   97,    2, 0x0a /* Public */,
+       1,    0,  134,    2, 0x0a /* Public */,
+       3,    0,  135,    2, 0x0a /* Public */,
+       4,    0,  136,    2, 0x0a /* Public */,
+       5,    0,  137,    2, 0x0a /* Public */,
+       6,    0,  138,    2, 0x0a /* Public */,
+       7,    0,  139,    2, 0x0a /* Public */,
+       8,    0,  140,    2, 0x0a /* Public */,
+       9,    0,  141,    2, 0x0a /* Public */,
+      10,    0,  142,    2, 0x0a /* Public */,
+      11,    0,  143,    2, 0x0a /* Public */,
+      12,    0,  144,    2, 0x0a /* Public */,
+      13,    0,  145,    2, 0x0a /* Public */,
+      14,    0,  146,    2, 0x0a /* Public */,
+      15,    0,  147,    2, 0x0a /* Public */,
+      16,    0,  148,    2, 0x0a /* Public */,
+      17,    0,  149,    2, 0x0a /* Public */,
+      18,    0,  150,    2, 0x0a /* Public */,
+      19,    0,  151,    2, 0x0a /* Public */,
+      20,    0,  152,    2, 0x0a /* Public */,
+      21,    0,  153,    2, 0x0a /* Public */,
+      22,    0,  154,    2, 0x0a /* Public */,
+      23,    0,  155,    2, 0x0a /* Public */,
+      24,    0,  156,    2, 0x0a /* Public */,
+      25,    0,  157,    2, 0x0a /* Public */,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -125,6 +156,16 @@ void DDCbuff::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 11: _t->delayBomb(); break;
         case 12: _t->delayBombA(); break;
         case 13: _t->bombCount(); break;
+        case 14: _t->curtain(); break;
+        case 15: _t->curtainA(); break;
+        case 16: _t->ud(); break;
+        case 17: _t->udA(); break;
+        case 18: _t->lr(); break;
+        case 19: _t->lrA(); break;
+        case 20: _t->half(); break;
+        case 21: _t->halfA(); break;
+        case 22: _t->br(); break;
+        case 23: _t->brA(); break;
         default: ;
         }
     }
@@ -156,13 +197,13 @@ int DDCbuff::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 14)
+        if (_id < 24)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 24;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 14)
+        if (_id < 24)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 14;
+        _id -= 24;
     }
     return _id;
 }

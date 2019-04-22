@@ -27,6 +27,11 @@ private:
 	QCheckBox *delayBox;
 	QCheckBox *standBox;
 	QCheckBox *punishBox;
+	QCheckBox *lrBoxA;
+	QCheckBox *udBoxA;
+	QCheckBox *halfBox;
+	QCheckBox *brBox;
+	QCheckBox *curtainBox;
 
 
 	bool isRunning();
@@ -58,4 +63,19 @@ public slots:
 	void delayBomb();
 	void delayBombA();
 	void bombCount();
+
+	void curtain();
+	void curtainA();
+
+	void ud();
+	void udA();
+
+	void lr();
+	void lrA();
+
+	void half();
+	void halfA();
+
+	void br();
+	void brA();
 };

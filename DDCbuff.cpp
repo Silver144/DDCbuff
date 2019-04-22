@@ -6,6 +6,8 @@ PROCESSENTRY32 pe;
 
 int cntHook1 = 1, cntHook2 = 1, cntHook3;
 
+bool flag[4];
+
 int procStand, procBonus;
 
 int bombCounter, bombFlag;
@@ -22,12 +24,19 @@ DDCbuff::DDCbuff(QWidget *parent)
 	procStand = 0;
 	procBonus = 0;
 
+	memset(flag, false, sizeof(flag));
+
 	inverseBox = new QCheckBox("½±Àø»¥»»", this);
 	lrBox = new QCheckBox("×óÓÒ·âÓ¡", this);
 	udBox = new QCheckBox("ÉÏÏÂ·âÓ¡", this);
 	delayBox = new QCheckBox("ËÄ³ßÕ¨µ¯", this);
 	standBox = new QCheckBox("ÌæÉíµØ²Ø", this);
 	punishBox = new QCheckBox("Ãâ·ÑÎç²Í", this);
+	lrBoxA = new QCheckBox("×óÓÒ·­×ª", this);
+	udBoxA = new QCheckBox("ÉÏÏÂ·­×ª", this);
+	halfBox = new QCheckBox("¹¥»÷¼Ó±¶", this);
+	brBox = new QCheckBox("br", this);
+	curtainBox = new QCheckBox("ÌúÄ»", this);
 
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(checkProg()));
@@ -68,9 +77,119 @@ void DDCbuff::checkProg()
 			playerStand();
 		else
 			playerStandA();
+		if (lrBoxA->isChecked())
+			lr();
+		else
+			lrA();
+		if (udBoxA->isChecked())
+			ud();
+		else
+			udA();
+		if (curtainBox->isChecked())
+			curtain();
+		else
+			curtainA();
+		if (halfBox->isChecked())
+			half();
+		else
+			halfA();
+		if (brBox->isChecked())
+			br();
+		else
+			brA();
 	}
 	else
 		this->setWindowTitle("No Game");
+}
+
+void DDCbuff::curtain()
+{
+	if (flag[0])
+		return;
+	flag[0] = true;
+	rename("data", "data_b");
+	rename("datatimemu", "data");
+}
+
+void DDCbuff::curtainA()
+{
+	if (!flag[0])
+		return;
+	flag[0] = false;
+	rename("data", "datatiemu");
+	rename("data_b", "data");
+}
+
+void DDCbuff::ud()
+{
+	if (flag[1])
+		return;
+	flag[1] = true;
+	rename("data", "data_b");
+	rename("dataflipud", "data");
+}
+
+void DDCbuff::udA()
+{
+	if (!flag[1])
+		return;
+	flag[1] = false;
+	rename("data", "dataflipud");
+	rename("data_b", "data");
+}
+
+void DDCbuff::lr()
+{
+	if (flag[2])
+		return;
+	flag[2] = true;
+	rename("data", "data_b");
+	rename("datafliplr", "data");
+}
+
+void DDCbuff::lrA()
+{
+	if (!flag[2])
+		return;
+	flag[2] = false;
+	rename("data", "datafliplr");
+	rename("data_b", "data");
+}
+
+void DDCbuff::half()
+{
+	if (flag[3])
+		return;
+	flag[3] = true;
+	rename("data", "data_b");
+	rename("datahalf", "data");
+}
+
+void DDCbuff::halfA()
+{
+	if (!flag[3])
+		return;
+	flag[3] = false;
+	rename("data", "datahalf");
+	rename("data_b", "data");
+}
+
+void DDCbuff::br()
+{
+	if (flag[4])
+		return;
+	flag[4] = true;
+	rename("data", "data_b");
+	rename("databr", "data");
+}
+
+void DDCbuff::brA()
+{
+	if (!flag[4])
+		return;
+	flag[4] = false;
+	rename("data", "databr");
+	rename("data_b", "data");
 }
 
 void DDCbuff::UIsetup()
@@ -89,6 +208,11 @@ void DDCbuff::UIsetup()
 	delayBox->setGeometry(150, 70, 111, 31);
 	standBox->setGeometry(20, 120, 111, 31);
 	punishBox->setGeometry(150, 120, 111, 31);
+	lrBoxA->setGeometry(20, 170, 111, 31);
+	udBoxA->setGeometry(150, 170, 111, 31);
+	halfBox->setGeometry(20, 220, 111, 31);
+	curtainBox->setGeometry(150, 220, 111, 31);
+	brBox->setGeometry(20, 270, 111, 31);
 
 }
 
@@ -310,11 +434,11 @@ void DDCbuff::punishBonusA()
 	{
 		unsigned char code[] = { 0x68, 0xA0, 0xA0, 0xA0, 0x80 };
 		unsigned char code2[] = {
-									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0X00, 0X00, 0X00, 0X00, 0X00,
-									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0X00, 0X00, 0X00, 0X00, 0X00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 		};
 
 		hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
@@ -328,22 +452,28 @@ void DDCbuff::punishBonusA()
 
 void DDCbuff::inverseBonus()
 {
-	unsigned char code[] = { 0x7F };
-	unsigned char code2[] = { 0x3C, 0x90, 0x90 };
+	unsigned char code[] = { 0xE9, 0x39, 0x81, 0x07, 0x00 };
+	unsigned char code2[] = {
+		0x83, 0xF8, 0x14, 0x0F, 0x8C, 0xE3, 0x7F, 0xF8, 0xFF, 0x83, 0xF8, 0x3C,
+		0x0F, 0x8F, 0xE6, 0x7E, 0xF8, 0xFF, 0xE9, 0xB0, 0x7E, 0xF8, 0xFF			  
+	};
 
 	hSnapshot = OpenProcess(PROCESS_ALL_ACCESS , false, (DWORD)pe.th32ProcessID);
-	WriteProcessMemory(hSnapshot, LPVOID(0x00438E01), code, sizeof(code), NULL);
-	WriteProcessMemory(hSnapshot, LPVOID(0x00438E31), code2, sizeof(code2), NULL);
+	WriteProcessMemory(hSnapshot, LPVOID(0x00438DFE), code, sizeof(code), NULL);
+	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
 
 }
 
 void DDCbuff::inverseBonusA()
 {
-	unsigned char code[] = { 0x7C };
-	unsigned char code2[] = { 0x32, 0x7C, 0x50 };
+	unsigned char code[] = { 0x83, 0xF8, 0x3C, 0x7C, 0x2C };
+	unsigned char code2[] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	};
 
 	hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
-	WriteProcessMemory(hSnapshot, LPVOID(0x00438E01), code, sizeof(code), NULL);
-	WriteProcessMemory(hSnapshot, LPVOID(0x00438E31), code2, sizeof(code2), NULL);
+	WriteProcessMemory(hSnapshot, LPVOID(0x00438DFE), code, sizeof(code), NULL);
+	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
 
 }
