@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_DDCbuff_t {
-    QByteArrayData data[26];
-    char stringdata0[210];
+    QByteArrayData data[30];
+    char stringdata0[230];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -56,7 +56,11 @@ QT_MOC_LITERAL(21, 188, 3), // "lrA"
 QT_MOC_LITERAL(22, 192, 4), // "half"
 QT_MOC_LITERAL(23, 197, 5), // "halfA"
 QT_MOC_LITERAL(24, 203, 2), // "br"
-QT_MOC_LITERAL(25, 206, 3) // "brA"
+QT_MOC_LITERAL(25, 206, 3), // "brA"
+QT_MOC_LITERAL(26, 210, 4), // "drum"
+QT_MOC_LITERAL(27, 215, 5), // "drumA"
+QT_MOC_LITERAL(28, 221, 3), // "big"
+QT_MOC_LITERAL(29, 225, 4) // "bigA"
 
     },
     "DDCbuff\0checkProg\0\0inverseBonus\0"
@@ -64,7 +68,8 @@ QT_MOC_LITERAL(25, 206, 3) // "brA"
     "unHook2\0punishBonus\0punishBonusA\0"
     "playerStand\0playerStandA\0delayBomb\0"
     "delayBombA\0bombCount\0curtain\0curtainA\0"
-    "ud\0udA\0lr\0lrA\0half\0halfA\0br\0brA"
+    "ud\0udA\0lr\0lrA\0half\0halfA\0br\0brA\0drum\0"
+    "drumA\0big\0bigA"
 };
 #undef QT_MOC_LITERAL
 
@@ -74,7 +79,7 @@ static const uint qt_meta_data_DDCbuff[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      24,   14, // methods
+      28,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -82,32 +87,40 @@ static const uint qt_meta_data_DDCbuff[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  134,    2, 0x0a /* Public */,
-       3,    0,  135,    2, 0x0a /* Public */,
-       4,    0,  136,    2, 0x0a /* Public */,
-       5,    0,  137,    2, 0x0a /* Public */,
-       6,    0,  138,    2, 0x0a /* Public */,
-       7,    0,  139,    2, 0x0a /* Public */,
-       8,    0,  140,    2, 0x0a /* Public */,
-       9,    0,  141,    2, 0x0a /* Public */,
-      10,    0,  142,    2, 0x0a /* Public */,
-      11,    0,  143,    2, 0x0a /* Public */,
-      12,    0,  144,    2, 0x0a /* Public */,
-      13,    0,  145,    2, 0x0a /* Public */,
-      14,    0,  146,    2, 0x0a /* Public */,
-      15,    0,  147,    2, 0x0a /* Public */,
-      16,    0,  148,    2, 0x0a /* Public */,
-      17,    0,  149,    2, 0x0a /* Public */,
-      18,    0,  150,    2, 0x0a /* Public */,
-      19,    0,  151,    2, 0x0a /* Public */,
-      20,    0,  152,    2, 0x0a /* Public */,
-      21,    0,  153,    2, 0x0a /* Public */,
-      22,    0,  154,    2, 0x0a /* Public */,
-      23,    0,  155,    2, 0x0a /* Public */,
-      24,    0,  156,    2, 0x0a /* Public */,
-      25,    0,  157,    2, 0x0a /* Public */,
+       1,    0,  154,    2, 0x0a /* Public */,
+       3,    0,  155,    2, 0x0a /* Public */,
+       4,    0,  156,    2, 0x0a /* Public */,
+       5,    0,  157,    2, 0x0a /* Public */,
+       6,    0,  158,    2, 0x0a /* Public */,
+       7,    0,  159,    2, 0x0a /* Public */,
+       8,    0,  160,    2, 0x0a /* Public */,
+       9,    0,  161,    2, 0x0a /* Public */,
+      10,    0,  162,    2, 0x0a /* Public */,
+      11,    0,  163,    2, 0x0a /* Public */,
+      12,    0,  164,    2, 0x0a /* Public */,
+      13,    0,  165,    2, 0x0a /* Public */,
+      14,    0,  166,    2, 0x0a /* Public */,
+      15,    0,  167,    2, 0x0a /* Public */,
+      16,    0,  168,    2, 0x0a /* Public */,
+      17,    0,  169,    2, 0x0a /* Public */,
+      18,    0,  170,    2, 0x0a /* Public */,
+      19,    0,  171,    2, 0x0a /* Public */,
+      20,    0,  172,    2, 0x0a /* Public */,
+      21,    0,  173,    2, 0x0a /* Public */,
+      22,    0,  174,    2, 0x0a /* Public */,
+      23,    0,  175,    2, 0x0a /* Public */,
+      24,    0,  176,    2, 0x0a /* Public */,
+      25,    0,  177,    2, 0x0a /* Public */,
+      26,    0,  178,    2, 0x0a /* Public */,
+      27,    0,  179,    2, 0x0a /* Public */,
+      28,    0,  180,    2, 0x0a /* Public */,
+      29,    0,  181,    2, 0x0a /* Public */,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -166,6 +179,10 @@ void DDCbuff::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 21: _t->halfA(); break;
         case 22: _t->br(); break;
         case 23: _t->brA(); break;
+        case 24: _t->drum(); break;
+        case 25: _t->drumA(); break;
+        case 26: _t->big(); break;
+        case 27: _t->bigA(); break;
         default: ;
         }
     }
@@ -197,13 +214,13 @@ int DDCbuff::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 24)
+        if (_id < 28)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 24;
+        _id -= 28;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 24)
+        if (_id < 28)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 24;
+        _id -= 28;
     }
     return _id;
 }

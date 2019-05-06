@@ -32,6 +32,8 @@ private:
 	QCheckBox *halfBox;
 	QCheckBox *brBox;
 	QCheckBox *curtainBox;
+	QCheckBox *drumBox;
+	QCheckBox *bigBox;
 
 
 	bool isRunning();
@@ -39,6 +41,9 @@ private:
 
 	void setHook3();
 	void unHook3();
+
+	void setHook4();
+	void unHook4();
 
 
 
@@ -78,4 +83,10 @@ public slots:
 
 	void br();
 	void brA();
+
+	void drum();
+	void drumA();
+
+	void big();
+	void bigA();
 };

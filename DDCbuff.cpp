@@ -4,49 +4,17 @@ HANDLE hSnapshot;
 
 PROCESSENTRY32 pe;
 
-int cntHook1 = 1, cntHook2 = 1, cntHook3;
+int cntHook1 = 1, cntHook2 = 1, cntHook3, cntHook4 = 1;
 
-bool flag[4];
+bool flag[7];
 
 int procStand, procBonus;
 
 int bombCounter, bombFlag;
 
-HHOOK KeyHook1, KeyHook2, KeyHook3;
+HHOOK KeyHook1, KeyHook2, KeyHook3, KeyHook4, KeyHook5;
 
 DDCbuff *hzc;
-
-DDCbuff::DDCbuff(QWidget *parent)
-	: QMainWindow(parent)
-{
-	hzc = this;
-
-	procStand = 0;
-	procBonus = 0;
-
-	memset(flag, false, sizeof(flag));
-
-	inverseBox = new QCheckBox("½±Àø»¥»»", this);
-	lrBox = new QCheckBox("×óÓÒ·âÓ¡", this);
-	udBox = new QCheckBox("ÉÏÏÂ·âÓ¡", this);
-	delayBox = new QCheckBox("ËÄ³ßÕ¨µ¯", this);
-	standBox = new QCheckBox("ÌæÉíµØ²Ø", this);
-	punishBox = new QCheckBox("Ãâ·ÑÎç²Í", this);
-	lrBoxA = new QCheckBox("×óÓÒ·­×ª", this);
-	udBoxA = new QCheckBox("ÉÏÏÂ·­×ª", this);
-	halfBox = new QCheckBox("¹¥»÷¼Ó±¶", this);
-	brBox = new QCheckBox("br", this);
-	curtainBox = new QCheckBox("ÌúÄ»", this);
-
-	timer = new QTimer(this);
-	connect(timer, SIGNAL(timeout()), this, SLOT(checkProg()));
-	timer->start(100);
-
-	delayBombTimer = new QTimer(this);
-	connect(delayBombTimer, SIGNAL(timeout()), this, SLOT(bombCount()));
-
-	UIsetup();
-}
 
 void DDCbuff::checkProg()
 {
@@ -97,6 +65,14 @@ void DDCbuff::checkProg()
 			br();
 		else
 			brA();
+		if (drumBox->isChecked())
+			drum();
+		else
+			drumA();
+		if (bigBox->isChecked())
+			big();
+		else
+			bigA();
 	}
 	else
 		this->setWindowTitle("No Game");
@@ -108,7 +84,7 @@ void DDCbuff::curtain()
 		return;
 	flag[0] = true;
 	rename("data", "data_b");
-	rename("datatimemu", "data");
+	rename("datatiemu", "data");
 }
 
 void DDCbuff::curtainA()
@@ -192,6 +168,42 @@ void DDCbuff::brA()
 	rename("data_b", "data");
 }
 
+void DDCbuff::drum()
+{
+	if (flag[5])
+		return;
+	flag[5] = true;
+	rename("data", "data_b");
+	rename("datadrum", "data");
+}
+
+void DDCbuff::drumA()
+{
+	if (!flag[5])
+		return;
+	flag[5] = false;
+	rename("data", "datadrum");
+	rename("data_b", "data");
+}
+
+void DDCbuff::big()
+{
+	if (flag[6])
+		return;
+	flag[6] = true;
+	rename("data", "data_b");
+	rename("databig", "data");
+}
+
+void DDCbuff::bigA()
+{
+	if (!flag[6])
+		return;
+	flag[6] = false;
+	rename("data", "databig");
+	rename("data_b", "data");
+}
+
 void DDCbuff::UIsetup()
 {
 	setWindowFlags(windowFlags() | Qt::WindowMinimizeButtonHint);
@@ -213,6 +225,8 @@ void DDCbuff::UIsetup()
 	halfBox->setGeometry(20, 220, 111, 31);
 	curtainBox->setGeometry(150, 220, 111, 31);
 	brBox->setGeometry(20, 270, 111, 31);
+	drumBox->setGeometry(150, 270, 111, 31);
+	bigBox->setGeometry(20, 320, 111, 31);
 
 }
 
@@ -267,6 +281,28 @@ LRESULT CALLBACK KeyProc3(int nCode, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(KeyHook3, nCode, wParam, lParam);
 }
 
+LRESULT CALLBACK KeyProc4(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode != HC_ACTION)
+		return CallNextHookEx(KeyHook4, nCode, wParam, lParam);
+	PKBDLLHOOKSTRUCT LowKey = NULL;
+	LowKey = (PKBDLLHOOKSTRUCT)lParam;
+	if (LowKey->vkCode == 'X')
+		return 1;
+	return CallNextHookEx(KeyHook4, nCode, wParam, lParam);
+}
+
+LRESULT CALLBACK KeyProc5(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode != HC_ACTION)
+		return CallNextHookEx(KeyHook5, nCode, wParam, lParam);
+	PKBDLLHOOKSTRUCT LowKey = NULL;
+	LowKey = (PKBDLLHOOKSTRUCT)lParam;
+	if (LowKey->vkCode == VK_CONTROL)
+		return 1;
+	return CallNextHookEx(KeyHook5, nCode, wParam, lParam);
+}
+
 void DDCbuff::setHook1()
 {
 	if (!cntHook1)
@@ -291,6 +327,14 @@ void DDCbuff::setHook3()
 	KeyHook3 = SetWindowsHookEx(WH_KEYBOARD_LL, KeyProc3, GetModuleHandle(NULL), 0);
 }
 
+void DDCbuff::setHook4()
+{
+	if (!cntHook4)
+		return;
+	cntHook4 = 0;
+	KeyHook4 = SetWindowsHookEx(WH_KEYBOARD_LL, KeyProc4, GetModuleHandle(NULL), 0);
+}
+
 void DDCbuff::unHook1()
 {
 	if (cntHook1)
@@ -313,6 +357,14 @@ void DDCbuff::unHook3()
 		return;
 	cntHook3 = 1;
 	UnhookWindowsHookEx(KeyHook3);
+}
+
+void DDCbuff::unHook4()
+{
+	if (cntHook4)
+		return;
+	cntHook4 = 1;
+	UnhookWindowsHookEx(KeyHook4);
 }
 
 bool DDCbuff::isRunning()
@@ -374,20 +426,13 @@ void DDCbuff::delayBombA()
 
 void DDCbuff::playerStand()
 {
-	unsigned char code[] = { 0xE9, 0xC6, 0x16, 0x06, 0x00, 0x90, 0x90, 0x90, 0x90, 0x90 };
-	unsigned char code2[] = {	
-								0x83, 0x3D, 0x70, 0x58, 0x4F, 0x00, 0x00, 0x7F, 0x19, 0xC7, 0x87, 0x84,
-								0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0xC7, 0x05, 0x70, 0x58, 0x4F,
-								0x00, 0x03, 0x00, 0x00, 0x00, 0xE9, 0x1D, 0xE9, 0xF9, 0xFF, 0xFF, 0x0D,
-								0x70, 0x58, 0x4F, 0x00, 0xC7, 0x87, 0x84, 0x06, 0x00, 0x00, 0x02, 0x00,
-								0x00, 0x00, 0x83, 0x05, 0x58, 0x58, 0x4F, 0x00, 0x32, 0xE9, 0x01, 0xE9,
-								0xF9, 0xFF
-							};
-	unsigned char code3[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+	unsigned char code[] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
+
 	hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
-	WriteProcessMemory(hSnapshot, LPVOID(0x0044F871), code, sizeof(code), NULL);
-	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
-	WriteProcessMemory(hSnapshot, LPVOID(0x0044DF45), code3, sizeof(code3), NULL);
+	WriteProcessMemory(hSnapshot, LPVOID(0x0044DECB), code, sizeof(code), NULL);
+
+	setHook4();
+
 	procStand = 1;
 }
 
@@ -395,16 +440,12 @@ void DDCbuff::playerStandA()
 {
 	if (procStand)
 	{
-		unsigned char code[] = { 0xC7, 0x87, 0x84, 0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00 };
-		unsigned char code2[62];
-		unsigned char code3[] = { 0xC7, 0x05, 0x70, 0x58, 0x4F, 0x00, 0x03, 0x00, 0x00, 0x00 };
-
-		memset(code2, 0, sizeof(code2));
+		unsigned char code[] = { 0x0F, 0x84, 0x00, 0x01, 0x00, 0x00 };
 
 		hSnapshot = OpenProcess(PROCESS_ALL_ACCESS, false, (DWORD)pe.th32ProcessID);
-		WriteProcessMemory(hSnapshot, LPVOID(0x0044F871), code, sizeof(code), NULL);
-		WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
-		WriteProcessMemory(hSnapshot, LPVOID(0x0044DF45), code3, sizeof(code3), NULL);
+		WriteProcessMemory(hSnapshot, LPVOID(0x0044DECB), code, sizeof(code), NULL);
+
+		unHook4();
 
 		procStand = 0;
 	}
@@ -476,4 +517,40 @@ void DDCbuff::inverseBonusA()
 	WriteProcessMemory(hSnapshot, LPVOID(0x00438DFE), code, sizeof(code), NULL);
 	WriteProcessMemory(hSnapshot, LPVOID(0x004B0F3C), code2, sizeof(code2), NULL);
 
+}
+
+DDCbuff::DDCbuff(QWidget *parent)
+	: QMainWindow(parent)
+{
+	hzc = this;
+
+	procStand = 0;
+	procBonus = 0;
+
+	memset(flag, false, sizeof(flag));
+
+	inverseBox = new QCheckBox("½±Àø»¥»»", this);
+	lrBox = new QCheckBox("×óÓÒ·âÓ¡", this);
+	udBox = new QCheckBox("ÉÏÏÂ·âÓ¡", this);
+	delayBox = new QCheckBox("ËÄ³ßÕ¨µ¯", this);
+	standBox = new QCheckBox("ÌæÉíµØ²Ø", this);
+	punishBox = new QCheckBox("Ãâ·ÑÎç²Í", this);
+	lrBoxA = new QCheckBox("×óÓÒ·­×ª", this);
+	udBoxA = new QCheckBox("ÉÏÏÂ·­×ª", this);
+	halfBox = new QCheckBox("¹¥»÷¼Ó±¶", this);
+	brBox = new QCheckBox("br", this);
+	curtainBox = new QCheckBox("ÌúÄ»", this);
+	drumBox = new QCheckBox("drum", this);
+	bigBox = new QCheckBox("±ä´ó", this);
+
+	timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()), this, SLOT(checkProg()));
+	timer->start(100);
+
+	KeyHook5 = SetWindowsHookEx(WH_KEYBOARD_LL, KeyProc5, GetModuleHandle(NULL), 0);
+
+	delayBombTimer = new QTimer(this);
+	connect(delayBombTimer, SIGNAL(timeout()), this, SLOT(bombCount()));
+
+	UIsetup();
 }
