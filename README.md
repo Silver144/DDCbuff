@@ -1,3 +1,3 @@
 ### **DDCbuff**
 
-A disappointing job
+辉针城的魔改，配合小大圣改的ins使用
